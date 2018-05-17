@@ -1,0 +1,59 @@
+.alert {
+	box-sizing: border-box;
+	display: none;
+	padding: 0rem;
+	position: relative;
+	&.error {
+		background: c("error");
+		color: white;
+		fill: white;
+		.close {
+			&:focus,
+			&:hover {
+				fill: black;
+			}
+		}
+	}
+	&.success {
+		background: c("success");
+		color: white;
+		fill: white;
+		.close {
+			&:focus,
+			&:hover {
+				fill: black;
+			}
+		}
+	}
+	&.warning {
+		background: c("warning");
+		color: c("text");
+		fill: c("text");
+		.close {
+			&:focus,
+			&:hover {
+				fill: white;
+			}
+		}
+	}
+	&.fixed {
+		box-shadow: 0 0 0rem black;
+		left: 50%;
+		max-width: 34.8rem;
+		position: fixed;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		width: calc(100% - #{grid("gutter") / 2});
+		z-index: z("alert");
+	}
+	h2, h3, h4 {
+		color: inherit;
+	}
+	.close {
+		height: 2.4rem;
+		width: 2.4rem;
+		svg {
+			width: 1rem;
+		}
+	}
+}

@@ -1,0 +1,3 @@
+#* * * * * perl /home/pi/synchro.pl >/dev/null 2>/dev/null
+* * * * * perl /home/pi/synchro.pl > /home/pi/sync.log
+* * * * * perl /home/pi/monitor.pl >/dev/null 2>/dev/null

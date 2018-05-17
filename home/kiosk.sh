@@ -12,7 +12,7 @@ sed -i 's/"exit_type":"Crashed"/"exit_type":"Normal"/' /home/pi/.config/chromium
  
 # Run Chromium and open tabs
 #/usr/bin/chromium-browser --noerrordialogs --kiosk --window-position=0,0 localhost/cgi-bin/hello.pl --disable-translate
-/usr/bin/chromium-browser --noerrordialogs --kiosk --window-position=0,0 localhost/cgi-bin/play.pl --disable-translate
+/usr/bin/chromium-browser --noerrordialogs --kiosk --window-position=0,0 localhost/cgi-bin/play2.pl --disable-translate
 # Start the kiosk loop. This keystroke changes the Chromium tab
 # To have just anti-idle, use this line instead:
 # xdotool keydown ctrl; xdotool keyup ctrl;

@@ -1,0 +1,57 @@
+.modal {
+	background: rgba(black, 0.25);
+	bottom: 0;
+	display: none;
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: z("modal");
+	&.property {
+		> div {
+			background: #F10039;
+			max-height: none;
+			max-width: none;
+			left: 0;
+			position: absolute;
+			right: 0;
+			text-align: center;
+			top: 7.8rem;
+			transform: none;
+			width: auto;
+		}
+		p {
+			color: white;
+			font-size: 9rem;
+			font-weight: 700;
+			line-height: 12rem;
+			text-transform: uppercase;
+			white-space: nowrap;
+		}
+	}
+	> div {
+		background: white;
+		box-sizing: border-box;
+		left: 50%;
+		max-height: calc(100% - #{grid("gutter") / 2});
+		max-width: 46.8rem;
+		overflow: auto;
+		padding: 1.2rem;
+		position: absolute;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		width: calc(100% - #{grid("gutter") / 2});
+	}
+	.close {
+		fill: white;
+		height: 4.2rem;
+		width: 4.2rem;
+		&:focus,
+		&:hover {
+			fill: red;
+		}
+		svg {
+			width: 1.8rem;
+		}
+	}
+}

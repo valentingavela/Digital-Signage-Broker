@@ -1,0 +1,33 @@
+/*!
+	ALFA v2.9.3
+	https://github.com/FAAREIA/ALFA
+	- - - - - - - - - - - - - - - -
+	Compiled with SASS v3.5.1
+	CSS file v0.1
+*/
+
+@import "core/functions",
+		"core/mixins",
+		"core/reset",
+		"core/colors",
+		"core/fonts",
+		"core/variables",
+		"core/layout",
+		"core/semantic",
+
+		"modules/alert",
+		"modules/animation",
+		"modules/list",
+		"modules/logotype",
+		"modules/modal",
+		"modules/print",
+		"modules/progress-bar",
+		"modules/slideshow",
+		"modules/svg",
+		"modules/utilities",
+		"modules/video",
+
+		"pages/article";
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - Express CSS code...

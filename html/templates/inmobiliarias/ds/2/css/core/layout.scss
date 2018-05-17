@@ -1,0 +1,36 @@
+:root {
+	font-size: 62.5%;
+}
+
+#header {
+	position: relative;
+}
+
+main {
+	height: 100vh;
+	position: relative;
+	width: 100%;
+}
+
+#footer {
+}
+
+.column {
+	margin: 0 auto;
+	max-width: w(grid("columns"), "rem");
+}
+
+[class*="col-"] {
+	box-sizing: border-box;
+}
+
+[class*="-pull-"],
+[class*="-push-"] {
+	position: relative;
+}
+
+@media (max-width: 112em) {
+	:root {
+		font-size: 43.75%;
+	}
+}

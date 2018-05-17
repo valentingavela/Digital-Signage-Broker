@@ -1,0 +1,59 @@
+html, body,
+header, footer, section, article, aside, nav,
+h1, h2, h3, h4, h5, h6,
+p, a, span, small, address, time, abbr, blockquote, q, cite,
+figure, img,
+div, ol, ul, li, dl, dt, dd,
+form, fieldset, legend, label, input, select, option, textarea, button,
+tr, th, td,
+progress, iframe {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	vertical-align: top;
+}
+
+a {
+	outline: 0;
+	text-decoration: none;
+}
+
+small {
+	font-size: inherit;
+}
+
+ol,
+ul {
+	list-style: none;
+}
+
+button {
+	background: none;
+	outline: 0;
+}
+
+.background img,
+.video video {
+	object-fit: cover;
+}
+
+.logo {
+	padding: 3.6rem;
+	img {
+		object-fit: contain;
+	}
+}
+
+article {
+	align-items: center;
+	box-sizing: border-box;
+	display: flex;
+	height: 100vh;
+	margin: 0 auto;
+}
+
+img,
+video {
+	height: 100%;
+	width: 100%;
+}

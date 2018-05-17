@@ -1,0 +1,42 @@
+body,
+input, select, textarea, button {
+	color: c("text");
+	font-family: ff("text");
+	font-size: 1.8rem;
+	line-height: 2.4rem;
+}
+
+h1, h2, h3, h4, h5, h6,
+dt,
+legend,
+th {
+	color: c("header");
+	font-family: ff("header");
+	font-weight: 700;
+	a {
+		color: inherit;
+		&:focus,
+		&:hover {
+			color: c("link");
+		}
+	}
+}
+
+h1, h2, h3, h4, h5, h6,
+p, a, span,
+img, svg,
+div, ol, ul, li, dl, dt, dd,
+form, label, input, select, option, textarea, button,
+th, td,
+progress {
+	transition-duration: trsdu("fast");
+}
+
+a {
+	color: c("link");
+	fill: inherit;
+	&:focus,
+	&:hover {
+		color: white;
+	}
+}

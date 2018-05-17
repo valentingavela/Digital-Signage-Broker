@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="es">
+<head>
+    <base href="/templates/01/">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Preview</title>
+	<link rel="stylesheet" href="css/styles.css?v=0.1">
+	<script defer src="js/jquery-3.2.1.min.js"></script>
+	<script defer src="js/jquery.cycle2.min.js"></script>
+</head>
+<body>
+	<main>
+		<article>
+			<div class="image">
+				<div class="slideshow">
+					<ul class="slides cycle-slideshow" data-cycle-slides="> li">
+					<TMPL_LOOP NAME=IMAGES>
+						<li><img src="<TMPL_VAR NAME=IMAGES_SRC>" alt=""></li>
+					</TMPL_LOOP>
+				</ul>
+				</div>
+				<p class="ubication"><TMPL_VAR NAME=dom></p>
+			</div
+			><div class="data">
+				<ul>
+					<li class="tag"><TMPL_VAR NAME=eti><!--eti_--></li
+					><li class="operation"><TMPL_VAR NAME=tip_ofe><!--tip_ofe_--></li
+					><li class="status"><TMPL_VAR NAME=est_emp><!--est_emp_--></li>
+				</ul>
+				<h1><TMPL_VAR NAME=des><!--des--></h1>
+				<dl>
+					<dt class="hide">Precio:</dt>
+					<dd class="price"><span><TMPL_VAR NAME=prc><!--prc--></span></dd>
+				</dl>
+				<p class="description"><TMPL_VAR NAME=txt><!--txt--></p>
+				<dl>
+					<dt>Superficie total</dt
+					><dd><TMPL_VAR NAME=nro_sup_tot><!--nro_sup_tot--></dd
+					><dt>Superficie cubierta</dt
+					><dd><TMPL_VAR NAME=nro_sup_cub><!--nro_sup_cub--></dd
+					><dt>Ambientes</dt
+					><dd><TMPL_VAR NAME=nro_amb><!--nro_amb--></dd
+					><dt>Ba&ntilde;os</dt
+					><dd><TMPL_VAR NAME=nro_ban><!--nro_ban--></dd
+					><dt>Cocheras</dt
+					><dd><TMPL_VAR NAME=nro_cch><!--nro_cch--></dd
+					><dt>Antig&uuml;edad</dt
+					><dd><TMPL_VAR NAME=nro_ani><!--_nro_ani--></dd
+					><dt>Entrega</dt
+					><dd><TMPL_VAR NAME=etg></dd>
+				</dl>
+				<small>
+					<a class="tel" href="tel:+54"><TMPL_VAR NAME=tel><!--tel--></a>
+					<a class="web" href="#" target="_blank"><TMPL_VAR NAME=web><!--web--></a>
+				</small>
+			</div>
+			<!-- <div class="modal property fade-in" data-modal="property" style="display: <!--display-->
+			<div class="modal property fade-in" data-modal="property" <TMPL_VAR NAME=tagdisplay> ;>
+				<div>
+					<p><TMPL_VAR NAME=tag></p>
+				</div>
+			</div>
+		</article>
+	</main>
+	<TMPL_VAR NAME=REDIR>
+</body>
+</html>

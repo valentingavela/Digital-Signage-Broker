@@ -135,10 +135,10 @@ sub startPrograms
 
 sub copyFiles
 {
-  system("cp $tmp_cgibin/* $d_cgibin ") ;
-  system("cp $tmp_templates/* $d_templates ") ;
-  system("cp $tmp_etc/* $d_etc ") ;
-  system("cp $tmp_home/* $d_home ") ;
+  system("cp -R $tmp_cgibin/* $d_cgibin ") ;
+  system("cp -R $tmp_templates/* $d_templates ") ;
+  system("cp -R $tmp_etc/* $d_etc ") ;
+  system("cp -R $tmp_home/* $d_home ") ;
 }
 
 sub chownDirs

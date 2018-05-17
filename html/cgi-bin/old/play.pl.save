@@ -1,0 +1,210 @@
+#!/usr/bin/perl -w
+# EL programa debe recibir un id
+# debe leer el json que le corresponde.
+# debe tener las cosas de sgtpreview para levantar un json y pasarlo a template.
+# debe agregarle el timer (que debe leerlo desde el json) 
+# Rsync sincroniza el schedule.json y pone en un directorio temp el schedule.json.
+# Si hay un schedule.json nuevo, rsync crea schedule.json.new. 
+# Si schedule.json.new existe, este script debe sobreescribir $jsonpth por schedule.json.new
+use utf8;
+use HTML::Template;
+use strict;                     
+use warnings;                   
+use CGI;
+use JSON;
+use File::Slurp;
+use File::stat;
+use Time::localtime;
+# use Data::Dumper;               
+
+
+my $cgi = CGI->new();
+my $vector = $cgi->param('vector');
+
+
+# my $jsonpth = '/home/siguit/inmobiliarias/3/6/schedule.json' ;
+# my $tptpth =  '/var/www/html/templates/inmoplay/01/index.html' ;
+my $jsonpth = 'schedule.json' ;
+my $tptpth =  '../templates/01/index.html' ;
+
+my $decoded_json = decode_json(read_file($jsonpth));
+
+#-----MAIN----------------
+mostrar($vector,$decoded_json);
+syncschedule("schedule.json","schedule.json.new");
+#--------------------------
+
+sub syncschedule
+{
+	#cuidado, el archivo 2 reemplazara al archivo 1 si es mas nuevo
+	my $file1 = shift ;
+	my $file2 = shift ;
+	my $ct1 =ctime(stat($file1)->mtime);
+	my $ct2 =ctime(stat($file2)->mtime);
+
+	if ($ct1 ne $ct2)
+	{	
+#		print("sync");
+		system("cp $file2 $file1");		
+	} 
+}
+
+sub mostrar
+{
+	my $vector = shift;
+	my $decoded_json = shift;
+
+	my $jsonlen  = scalar @{$decoded_json->{'schedule'}};
+	if($vector >= $jsonlen){ $vector = 0 ; }
+	
+	my @schedule = @{$decoded_json->{'schedule'}};
+	my $duration = $decoded_json->{'duration'};
+	# print("DUR: " . $decoded_json->{'duration'});
+
+	my $template = HTML::Template->new(filename => $tptpth);
+	my $imgpth = "/siguit-inmo/images/";
+
+	my $f = $schedule[$vector];
+	$template->param(nro_amb => $f->{"Ambientes"} );
+	$template->param(nro_ani => $f->{"Antiguedad"} );
+	$template->param(nro_ban => $f->{"Banos"} );
+	$template->param(nro_cch => $f->{"Cocheras"} );
+	$template->param(txt => $f->{"Descripcion"} );
+	$template->param(dom => $f->{"Direccion"} );
+	$template->param(etg => $f->{"Entrega"} );
+	$template->param(est_emp => $f->{"Estado"} );
+	$template->param(prc => $f->{"Precio"} );
+	$template->param(des => $f->{"Propiedad"} );
+	# $template->param(prc => $f->{"Provincia"} );
+	$template->param(nro_sup_tot => $f->{"SuperfCubierta"} );
+	$template->param(nro_sup_cub => $f->{"SuperfTotal"} );
+	$template->param(tel => $f->{"Telefono"} );
+	$template->param(tip_ofe => $f->{"TipodeOperacion"} );
+	# $template->param(des => $f->{"Titulo"} );
+
+	if (!$f->{"Tag"})
+	{
+		$template->param(tagdisplay => 'style="display:none"' );
+	}
+	else
+	{
+		$template->param(tag => $f->{"Tag"} );
+	}
+
+	#----IMAGENES---------------------------------------------------
+	my @imgs = @{$decoded_json->{'schedule'}[$vector]{'images'}};
+	# print @images[0]->{'url'};
+	my @images;
+	for my $elem (@imgs) {
+		push @images,$imgpth.$elem->{'url'};
+	}
+	
+    my @loop_data = ();  # initialize an array to hold your loop
+	while (@images)
+	{
+	    my %row_data;  # get a fresh hash for the row data
+		$row_data{IMAGES_SRC} = shift @images;
+        push(@loop_data, \%row_data);
+	}
+    $template->param(IMAGES => \@loop_data);
+	#----------------------------------------------------------------
+	
+    $template->param(REDIR => redir($vector,$duration));
+	
+	print $cgi->header();
+	print $template->output();
+
+ }
+#-------------
+
+
+sub traducirTag
+{
+my $tag = shift;
+my $r;
+if($tag == 1)
+{
+$r = 'RESERVADO';
+}
+elsif($tag == 2)
+{
+$r = 'VENDIDO';
+}
+return $r;
+}
+#-------------
+
+
+sub mostrarTag
+{
+my $tag = shift;
+my $r;
+if ($tag == 1 or $tag == 2) 
+{
+}
+else
+{
+$r = 'style="display:none"';
+}
+return $r;
+}
+#-------------
+
+
+sub traducirEti
+{
+my $q = shift;
+my $r;
+
+if ($q == 0){    $r="NUEVO";   }
+if ($q == 1){    $r="DESTACADO";   }
+
+return $r;
+}
+#-----------------
+
+
+sub traducirOfe
+{
+my $q = shift;
+my $r;
+
+if ($q == 2) {    $r="ALQUILER";   }
+if ($q == 1) {    $r="VENTA";   }
+if ($q == 3) {    $r="EMPRENDIMIENTO";   }
+
+return $r;
+}
+#-------------------
+
+
+sub traducirEstEmp
+{
+my $q = shift;
+my $r;
+
+if ($q == 3)  {    $r="EN POZO";   }
+if ($q == 1)  {    $r="EN CONSTRUCCION";   }
+if ($q == 2)  {    $r="A ESTRENAR";   }
+
+return $r;
+}
+
+#------------------
+
+
+sub redir
+{
+my $vector = shift;
+$vector += 1;
+my $duration = shift;
+my $miliseconds = $duration*1000;
+my $s = qq
+	{
+	<script>
+	window.setTimeout("location=('/cgi-bin/play.pl?vector=$vector');",$miliseconds );
+	</script>
+	};
+
+return $s;
+}

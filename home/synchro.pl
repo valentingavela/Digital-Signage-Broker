@@ -1,15 +1,12 @@
 #!/usr/local/bin/perl
-use strict ;
+# use strict ;
 use warnings ;
 use JSON;
 use File::Slurp;
 
-my $synccore = $ARGV[0];
-
-my $dis = 1 ; #el id del dispositivo debe leerse desde un file
-
-# my $folder = 3;
-# my $local = 7;
+# my $dis = qx(cat /var/www/html/cgi-bin/dis_number.txt) ; #el id del dispositivo debe leerse desde un file
+my $dis = read_file("/var/www/html/cgi-bin/dis_number.txt"); #el id del dispositivo debe leerse desde un file
+$dis =~ tr/\r\n//d;
 
 my $pthremoteimages = '/var/www/html/siguitds/inmobiliarias/images' ;
 my $pthlocalimages = '/var/www/html/siguitds/inmobiliarias/images' ;
@@ -19,41 +16,9 @@ my $pthremotevideos = '/var/www/html/siguitds/inmobiliarias/videos' ;
 my $pthlocalvideos = '/var/www/html/siguitds/inmobiliarias/videos' ;
 my $pthlocallistcvideos = '/tmp/rsyncvideos.txt';
 
-# my $pthremoteplay = '/usr/lib/cgi-bin/play.pl' ;
-# my $pthlocalplay = '/home/pi/play.pl' ;
-
-# my $pthremotetpt = 'inmobiliarias/templates/' ;
-# my $pthlocaltpt = '/var/www/html/templates/' ;
- #De aca se descargan los json
-
-my $phtremoteschedule = "/var/www/html/siguitds/inmobiliarias/schedule/$dis.json" ;
-my $phtlocalschedule = "/tmp/schedule.json.new";
-
-
-
-
-###############
-##UPDATE CORE##
-###############
-
-# if (defined $synccore && $synccore eq 'core') {
-	# print "Warning: SINCRONIZANDO NUCLEO!'\n\n";
-
-	# if (rsync($pthremoteplay, $pthlocalplay))
-	# {
-		# print("ACTUALIZANDO PLAY.PL. DEBO REINICIAR EL SISTEMA. \n")
-		# # Si se actualiza play.pl debo detener el chrome	.
-	# }
-
-	# #En realidad la raspi va a saber qué carpeta buscar por dispositivo. porque va a estar asociada
-	# #por MAC a un dispositivo fisico.
-	# if (rsync($pthremotetpt, $pthlocaltpt))
-	# {
-	# print("ACTUALIZANDO TEMPLATES \n");
-	# }
-
-	# exit;
-# }
+my $phtremoteschedule = "/var/www/html/siguitds/inmobiliarias/schedule/".$dis.".json" ;
+my $phtlocalschedule = "/tmp/schedule.json.new.tmp" ;
+my $pthplayschedule = "/tmp/schedule.json.new" ;
 
 #########################
 ####UPDATE SCHEDULE #####
@@ -65,7 +30,6 @@ if (rsync($phtremoteschedule, $phtlocalschedule))
 print("ACTUALIZANDO SCHEDULE.JSON \n") ;
 
 	#Sincronizar IMAGENES LEYENDO EL JSON.
-	# system("chown www-data:www-data /var/www/html/cgi-bin/schedule.json") ;
 	system("chown www-data:www-data $phtlocalschedule") ;
 
 	if (-e $phtlocalschedule)
@@ -78,8 +42,6 @@ print("ACTUALIZANDO SCHEDULE.JSON \n") ;
 		if (rsync($pthremoteimages, $pthlocalimages, $pthlocallistimages))
 		{
 		print("IMAGENES ACTUALIZADAS \n");
-		# system("chown pi:www-data -R /var/www/html/siguit-inmo/images") ;
-    # system("chown pi:www-data /var/www/html/siguit-inmo/images/*") ;
 		system("chown pi:www-data -R $pthlocalimages") ;
     system("chown pi:www-data $pthlocalimages/*") ;
 		}
@@ -87,17 +49,17 @@ print("ACTUALIZANDO SCHEDULE.JSON \n") ;
 		if (rsync($pthremotevideos, $pthlocalvideos, $pthlocallistcvideos))
 		{
 		print("VIDEOS ACTUALIZADOS \n");
-		# system("chown pi:www-data -R /var/www/html/siguit-inmo/images") ;
-		# system("chown pi:www-data /var/www/html/siguit-inmo/images/*") ;
 		system("chown pi:www-data -R $pthlocalvideos") ;
 		system("chown pi:www-data $pthlocalvideos/*") ;
 		}
 	}
+	system("cp $phtlocalschedule $pthplayschedule") ;
 }
 else
 {
 print "Nada que hacer \n" ;
 }
+
 
 #----------------------------------
 
@@ -105,28 +67,60 @@ print "Nada que hacer \n" ;
 sub createimglist
 {
 	#Crea una lista de imagenes a partir del json
+	print("Creando lista de imagenes \n") ;
 	my $decoded_json = shift;
 	my $pthlistimages = shift;
-
-
-	my @schedule = @{$decoded_json->{'schedule'}};
 	my $s;
-	foreach my $f ( @schedule )
-	{
-		foreach my $p (@{$f->{images}})
+
+	my @schedule ;
+	#QR
+	if (ref($decoded_json->{'schedule'}) eq 'HASH' or ref($decoded_json->{'schedule'}) eq 'ARRAY') {
+		@schedule = @{$decoded_json->{'schedule'}};
+		foreach my $f ( @schedule )
 		{
-		#imagenes de las propiedades
-		$s .= "$p->{'url'}\n" ;
+			$s .= "$f->{'img_qr'}\n" ;
+
+			foreach my $p (@{$f->{images}})
+			{
+			#imagenes de las propiedades
+			$s .= "$p->{'url'}\n" ;
+			}
 		}
 	}
-	#imagenes de los intervalos
-	$s .= "$decoded_json->{ivl}{img}\n" ;
-	$s .= "$decoded_json->{ivl2}{img}\n" ;
 
+	#Invervalos
+	my @ivl ;
+	if (ref($decoded_json->{'ivl'}{media}) eq 'ARRAY')
+	{
+		@ivl = @{$decoded_json->{'ivl'}{media}};
+		foreach my $f ( @ivl )
+		{
+			if ((lc($f) =~ /mov$/) || (lc($f) =~ /mp4$/))
+			{
+
+			}
+			else
+			{
+				$s .= "$f\n" ;
+			}
+		}
+	}
+
+	#Logos
+	my $logo = $decoded_json->{logo}{media};
+	if (defined $logo and $logo ne '')
+	{
+		if ((lc($logo) =~ /mov$/) || (lc($logo) =~ /mp4$/))
+		{
+
+		}
+		else
+		{
+			$s .= "$logo\n" ;
+		}
+	}
+	# print("$s \n") ;
 	write_file($pthlistimages, $s) ;
-	# open(my $fh, '>', $pthlistimages);
-	# print $fh $s;
-	# close $fh;
 }
 #----------------------------------
 
@@ -137,22 +131,42 @@ sub createVidList
 	my $decoded_json = shift;
 	my $pthlistvideos = shift;
 
-	# my @schedule = @{$decoded_json->{'schedule'}};
-	my $s = "";
-	# foreach my $f ( @schedule )
-	# {
-	# 	foreach my $p (@{$f->{videos}})
-	# 	{
-	# 	$s .= "$p->{'url'}\n" ;
-	# 	}
-	# }
-	$s .= "$decoded_json->{ivl}{vid}\n" ;
-	$s .= "$decoded_json->{ivl2}{vid}\n" ;
+	my $s ;
 
+	#Videos de los instervalos
+	my @ivl ;
+	if (ref($decoded_json->{'ivl'}{media}) eq 'ARRAY')
+	 {
+		@ivl = @{$decoded_json->{'ivl'}{media}};
+		foreach my $f ( @ivl )
+		{
+			if ((lc($f) =~ /mov$/) || (lc($f) =~ /mp4$/))
+			{
+				$s .= "$f\n" ;
+			}
+			else
+			{
+			}
+		}
+	}
+
+	#Logos
+	my $logo = $decoded_json->{logo}{media};
+	if (defined $logo and $logo ne '')
+	{
+		if ($logo ne '')
+		{
+			if ((lc($logo) =~ /mov$/) || (lc($logo) =~ /mp4$/))
+			{
+				$s .= "$logo\n" ;
+			}
+			else
+			{
+			}
+		}
+	}
+	# print("$s \n") ;
 	write_file($pthlistvideos, $s) ;
-	# open(my $fh, '>', $pthlistimages);
-	# print $fh $s;
-	# close $fh;
 }
 
 
@@ -181,7 +195,7 @@ sub rsync
 	$c .= $dest . " " ;
 	my $v = qx($c);
 	my $ln = $v =~ tr/\n// ;
-	# print $v;
+	print $v;
 
 	if ($ln > $outputlines)
 	{

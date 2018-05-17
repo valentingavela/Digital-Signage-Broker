@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="es">
+<base href="/templates/inmobiliarias/ds/logo/">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Logo</title>
+	<link rel="stylesheet" href="css/styles.css?v=0.2">
+</head>
+<body style="background: #202020;">
+	<main>
+		<article>
+	      <video id="video" autoplay>
+	        <source src="http://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+	      </video>
+			</article>
+	</main>
+	<script>
+		document.getElementById('video').addEventListener('ended', function(e) {
+	  	alert('The End');
+		})
+	</script>
+	<TMPL_VAR NAME=redir>
+</body>
+</html>
