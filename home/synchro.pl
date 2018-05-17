@@ -16,8 +16,8 @@ my $pthremotevideos = '/var/www/html/siguitds/inmobiliarias/videos' ;
 my $pthlocalvideos = '/var/www/html/siguitds/inmobiliarias/videos' ;
 my $pthlocallistcvideos = '/tmp/rsyncvideos.txt';
 
-my $phtremoteschedule = "/var/www/html/siguitds/inmobiliarias/schedule/".$dis.".json" ;
-my $phtlocalschedule = "/tmp/schedule.json.new.tmp" ;
+my $pthremoteschedule = "/var/www/html/siguitds/inmobiliarias/schedule/".$dis.".json" ;
+my $pthlocalschedule = "/tmp/schedule.json.new.tmp" ;
 my $pthplayschedule = "/tmp/schedule.json.new" ;
 
 #########################
@@ -25,16 +25,17 @@ my $pthplayschedule = "/tmp/schedule.json.new" ;
 #########################
 print ("Comenzando \n") ;
 
-if (rsync($phtremoteschedule, $phtlocalschedule))
+if (rsync($pthremoteschedule, $pthlocalschedule))
 {
 print("ACTUALIZANDO SCHEDULE.JSON \n") ;
 
 	#Sincronizar IMAGENES LEYENDO EL JSON.
-	system("chown www-data:www-data $phtlocalschedule") ;
+	system("chown www-data:www-data $pthlocalschedule") ;
+	system("chown www-data:www-data $pthplayschedule") ;
 
-	if (-e $phtlocalschedule)
+	if (-e $pthlocalschedule)
 	{
-		my $decoded_json = decode_json(read_file($phtlocalschedule)) ;
+		my $decoded_json = decode_json(read_file($pthlocalschedule)) ;
 		createimglist($decoded_json, $pthlocallistimages);
 		createVidList($decoded_json, $pthlocallistcvideos);
 
@@ -43,7 +44,7 @@ print("ACTUALIZANDO SCHEDULE.JSON \n") ;
 		{
 		print("IMAGENES ACTUALIZADAS \n");
 		system("chown pi:www-data -R $pthlocalimages") ;
-    system("chown pi:www-data $pthlocalimages/*") ;
+	        system("chown pi:www-data $pthlocalimages/*") ;
 		}
 		#ACTUALIZAR VIDEOS
 		if (rsync($pthremotevideos, $pthlocalvideos, $pthlocallistcvideos))
@@ -53,7 +54,7 @@ print("ACTUALIZANDO SCHEDULE.JSON \n") ;
 		system("chown pi:www-data $pthlocalvideos/*") ;
 		}
 	}
-	system("cp $phtlocalschedule $pthplayschedule") ;
+	system("cp $pthlocalschedule $pthplayschedule") ;
 }
 else
 {
