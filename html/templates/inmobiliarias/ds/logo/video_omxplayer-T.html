@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Logo</title>
+	<link rel="stylesheet" href="css/styles.css?v=0.1">
+
+  <script>
+  function videoProcessStatus() {
+    var response_text = '';
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        console.log(this.responseText) ;
+        if(this.responseText == 'END')
+        {
+          window.location.href = "/cgi-bin/play2.pl";
+        }
+      }
+    };
+    xhttp.open("GET", "/cgi-bin/videoProcess.pl", true);
+    xhttp.send();
+
+  }
+
+  function playVideo() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+      }
+    };
+    xhttp.open("GET", "/cgi-bin/playVideo.pl?<TMPL_VAR NAME=video_name>", true);
+    xhttp.send();
+  }
+  </script>
+
+</head>
+<body style="background: #202020;">
+	<main>
+		<article class="logo">
+		</article>
+	</main>
+  <script>
+   playVideo() ;
+
+   window.setInterval(function(){
+     videoProcessStatus() ;
+   }, 1000);
+   </script>
+</body>
+</html>

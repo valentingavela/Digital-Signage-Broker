@@ -1,0 +1,12 @@
+# my $is_playing = 1 ;
+# while ($is_playing)
+# {
+#   if(`ps -aef | grep -v grep oxplayer.bin`) {
+#     system("echo -n VIDEO_IS_PLAYING > /tmp/video_status") ;
+#   }
+#   else
+#   {
+#     system("echo -n VIDEO_IS_STOPPED > /tmp/video_status") ;
+#     $is_playing = 0 ;
+#   }
+# }
